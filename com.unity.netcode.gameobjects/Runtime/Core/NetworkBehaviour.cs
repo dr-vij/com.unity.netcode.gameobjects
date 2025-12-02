@@ -801,13 +801,15 @@ namespace Unity.Netcode
             // Initialize again in case the user's OnNetworkSpawn changed something
             InitializeVariables();
 
-            if (m_NetworkObject.HasAuthority)
-            {
-                // Since we just spawned the object and since user code might have modified their NetworkVariable, esp.
-                // NetworkList, we need to mark the object as free of updates.
-                // This should happen for all objects on the machine triggering the spawn.
-                PostNetworkVariableWrite(true);
-            }
+            // ALICE GAMES CHANGES (REMOVED PostNetworkVariableWrite and moved it to NetworkPostSpawn
+            // if (m_NetworkObject.HasAuthority)
+            // {
+            //     // Since we just spawned the object and since user code might have modified their NetworkVariable, esp.
+            //     // NetworkList, we need to mark the object as free of updates.
+            //     // This should happen for all objects on the machine triggering the spawn.
+            //     PostNetworkVariableWrite(true);
+            // }
+            // ALICE GAMES CHANGES END
         }
 
         internal void NetworkPostSpawn()
@@ -816,6 +818,15 @@ namespace Unity.Netcode
             {
                 InternalOnNetworkPostSpawn();
                 OnNetworkPostSpawn();
+                // ALICE GAMES CHANGES
+                if (NetworkObject.HasAuthority)
+                {
+                    // Since we just spawned the object and since user code might have modified their NetworkVariable, esp.
+                    // NetworkList, we need to mark the object as free of updates.
+                    // This should happen for all objects on the machine triggering the spawn.
+                    PostNetworkVariableWrite(true);
+                }
+                // ALICE GAMES CHANGES END
             }
             catch (Exception e)
             {
